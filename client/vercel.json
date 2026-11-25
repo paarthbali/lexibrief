@@ -1,0 +1,9 @@
+
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://lexibrief-k2ba.onrender.com/api/:path*"
+    }
+  ]
+}
