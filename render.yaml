@@ -1,0 +1,54 @@
+# Render Blueprint: creates both services from this repository.
+# Secrets marked sync:false are asked for in the Render dashboard.
+services:
+  - type: web
+    name: lexibrief-extractor
+    runtime: python
+    rootDir: server/extractor
+    buildCommand: pip install -r requirements.txt
+    startCommand: python extract.py
+    envVars:
+      - key: EXTRACT_SECRET
+        sync: false
+
+  - type: web
+    name: lexibrief
+    runtime: node
+    buildCommand: cd client && npm install && npm run build && cd ../server && npm install && npx prisma migrate deploy
+    startCommand: cd server && npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20
+      - key: ENABLE_CRON
+        value: "true"
+      - key: APP_URL
+        sync: false
+      - key: EXTRACT_URL
+        sync: false
+      - key: EXTRACT_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: AUTH_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        sync: false
+      - key: GEMINI_FALLBACK_MODEL
+        sync: false
+      - key: GEMINI_EMBED_MODEL
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: BLOB_READ_WRITE_TOKEN
+        sync: false
+      - key: CRON_SECRET
+        sync: false

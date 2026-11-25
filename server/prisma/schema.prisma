@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String?
+  email         String     @unique
+  password      String?
+  emailVerified DateTime?
+  role          Role       @default(LAWYER)
+  judgments     Judgment[]
+  resetTokens   PasswordResetToken[]
+  createdAt     DateTime   @default(now())
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  email     String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  purpose   String   @default("VERIFY")
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@index([userId])
+}
+
+model Judgment {
+  id         String     @id @default(cuid())
+  title      String
+  caseNumber String?
+  court      String?
+  fileUrl    String
+  fullText   String?
+  summary    String?
+  keyPoints  Json?
+  status     Status     @default(PROCESSING)
+  user       User       @relation(fields: [userId], references: [id])
+  userId     String
+  citations  Citation[]
+  hearings   Hearing[]
+  createdAt  DateTime   @default(now())
+  pageCount    Int?
+  errorMessage String?
+    parties      String?
+  outcome      String?
+  language     String?
+  summarizedAt DateTime?
+  embedding    Unsupported("vector(768)")?
+}
+
+model Citation {
+  id         String   @id @default(cuid())
+  text       String
+  normalized String?
+  judgment   Judgment @relation(fields: [judgmentId], references: [id], onDelete: Cascade)
+  judgmentId String
+
+  @@index([normalized])
+}
+
+model Hearing {
+  id         String    @id @default(cuid())
+  date       DateTime
+  purpose    String?
+  judgment   Judgment  @relation(fields: [judgmentId], references: [id], onDelete: Cascade)
+  judgmentId String
+  reminderSentAt DateTime?
+}
+
+enum Role {
+  LAWYER
+  OFFICIAL
+  ADMIN
+}
+
+enum Status {
+  PROCESSING
+  READY
+  FAILED
+}

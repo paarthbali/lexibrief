@@ -1,0 +1,17 @@
+{
+  "name": "lexibrief",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-powered legal intelligence and case management for court judgments (React + Express).",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev:extractor": "npm --prefix server run extractor",
+    "build": "npm --prefix client run build",
+    "start": "npm --prefix server start",
+    "migrate": "npm --prefix server run migrate"
+  }
+}

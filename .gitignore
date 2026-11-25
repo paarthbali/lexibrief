@@ -1,0 +1,20 @@
+# dependencies and builds
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+
+# secrets, never commit these
+.env
+.env.*
+!.env.example
+
+# logs and editor/OS files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
