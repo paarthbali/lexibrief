@@ -1,9 +1,14 @@
-
 {
+  "installCommand": "npm --prefix server install && npm --prefix client install --include=dev",
+  "buildCommand": "npm --prefix client run build",
+  "outputDirectory": "client/dist",
+  "functions": {
+    "api/index.js": { "maxDuration": 300 },
+    "api/extract.py": { "maxDuration": 60 }
+  },
   "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://lexibrief-k2ba.onrender.com/api/:path*"
-    }
-  ]
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
+  "crons": [{ "path": "/api/cron/reminders", "schedule": "30 2 * * *" }]
 }
